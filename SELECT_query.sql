@@ -1,6 +1,7 @@
 select title, duration 
   from tracks_list 
- order by duration desc limit 1;
+ where duration = (select max(duration) 
+					 from tracks_list);
 
 select title 
   from tracks_list 
@@ -45,21 +46,21 @@ select title
 			   join albums_list as al 
 			   on aa.album_id = al.id
 		 where al.release_year = 2020);
-		
-select distinct title 
-  from collections_list
- where id in
- 	   (select collection_id 
- 	   	  from collections_tracks as ct 
-			   join tracks_list as tl 
-			   on ct.track_id = tl.id
+
+select distinct cl.title 
+  from collections_list as cl
+	   join collections_tracks as ct 
+	   on cl.id = ct.collection_id
+
+	   join tracks_list as tl 
+	   on ct.track_id = tl.id
 			   
-			   join albums_list al 
-			   on tl.album_id = al.id
+	   join albums_list as al 
+	   on tl.album_id = al.id
 			   
-			   join albums_artists aa 
-			   on al.id = aa.album_id
+	   join albums_artists as aa 
+	   on al.id = aa.album_id
 			   
-			   join artists_list al2 
-			   on aa.artist_id = al2.id
-		 where al2.title = 'Drake');
+	   join artists_list as al2 
+	   on aa.artist_id = al2.id
+ where al2.title = 'Drake';
